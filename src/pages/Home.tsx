@@ -1,11 +1,11 @@
-import { useSelector, useDispatch } from 'react-redux';
+// import { useSelector, useDispatch } from 'react-redux';
 // import { RootState } from '@/';
 // import { increment, decrement } from '@/features/counter/counterSlice';
 import { Link } from 'react-router-dom';
 
 export default function Home() {
 //   const count = useSelector((state: RootState) => state.counter.value);
-  const dispatch = useDispatch();
+//   const dispatch = useDispatch();
 
   return (
     <div>

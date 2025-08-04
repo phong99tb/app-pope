@@ -9,7 +9,8 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const dataLogin = await signInWithEmailAndPassword(auth, email, password);
+      console.log('dataLogin', dataLogin);
       alert('Đăng nhập thành công!');
     } catch (error: any) {
       alert('Lỗi: ' + error.message);

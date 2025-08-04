@@ -1,52 +1,54 @@
 import { useState, useEffect } from 'react';
-import { auth } from '@/firebase';
 import { addTodo, getTodos, deleteTodo } from '@/services/todoService';
 import type { TodoItem } from '@/services/todoService';
-import { onAuthStateChanged } from 'firebase/auth';
-// import type { User } from 'firebase/auth';
-
+import { useAuth } from '@/hooks/useAuth';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 
 function TodoList() {
+  const { user, loading, isAuthenticated } = useAuth();
+  const { isListening, transcript, startListening, stopListening } = useSpeechRecognition();
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [text, setText] = useState('');
-//   const [user, setUser] = useState<User | null>(null);
-  const [uid, setUid] = useState<any>('');
 
-//   const uid = user.uid;
-//   const uid = auth.currentUser?.uid;
-  if (!uid) return <p>Vui lòng đăng nhập để dùng TodoList</p>;
+  useEffect(() => {
+    if (!user) return;
 
-  const loadTodos = async () => {
-    const list = await getTodos(uid);
+    const loadTodos = async () => {
+      const list = await getTodos(user.uid);
+      setTodos(list);
+    };
+
+    loadTodos();
+  }, [user]);
+
+  const handleAdd = async () => {
+    if (!text.trim() || !user) return;
+    await addTodo(text, user.uid);
+    setText('');
+    const list = await getTodos(user.uid);
     setTodos(list);
   };
 
-  const handleAdd = async () => {
-    if (!text.trim()) return;
-    await addTodo(text, uid);
-    setText('');
-    await loadTodos();
-  };
-
   const handleDelete = async (id: string) => {
+    if (!user) return;
     await deleteTodo(id);
-    await loadTodos();
+    const list = await getTodos(user.uid);
+    setTodos(list);
   };
 
-  useEffect(() => {
-    loadTodos();
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    //   setUser(currentUser);
-      setUid(currentUser?.uid)
-      console.log('currentUser', currentUser);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  if (loading) return <p>Đang kiểm tra đăng nhập...</p>;
+  if (!isAuthenticated) return <p>Vui lòng đăng nhập để dùng TodoList</p>;
 
   return (
     <div>
       <h2>Todo List</h2>
+      <div>
+      <h2>Nhận diện giọng nói</h2>
+      <button onClick={isListening ? stopListening : startListening}>
+        {isListening ? 'Dừng lại' : 'Bắt đầu nói'}
+      </button>
+      <p>Kết quả: {transcript}</p>
+    </div>
       <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Nhập công việc..." />
       <button onClick={handleAdd}>Thêm</button>
       <ul>

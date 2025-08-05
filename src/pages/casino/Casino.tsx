@@ -1,0 +1,91 @@
+import { useEffect, useState } from "react";
+import { Button, Modal, Input, List, message } from "antd";
+import { useNavigate } from "react-router-dom";
+import { db } from "@/firebase";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
+
+const matchRef = collection(db, "matches");
+
+export default function Casino() {
+  const [matches, setMatches] = useState<any>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [nameMatch, setNameMatch] = useState("");
+  const navigate = useNavigate();
+
+  // Lấy danh sách ván từ Firestore (realtime)
+  useEffect(() => {
+    const q = query(matchRef);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const result = snapshot.docs.map((doc) => doc.data().name);
+      setMatches(result);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleAddMatch = async () => {
+    const name = nameMatch.trim();
+    if (!name) {
+      message.warning("Vui lòng nhập tên ván.");
+      return;
+    }
+
+    try {
+      await addDoc(matchRef, { name });
+      setNameMatch("");
+      setIsModalOpen(false);
+      message.success("Thêm ván thành công!");
+    } catch (error) {
+      console.error(error);
+      message.error("Thêm thất bại.");
+    }
+  };
+
+  const goTo = (name: any) => {
+    navigate(`/app-pope/casino/${name}`);
+  };
+
+  return (
+    <div style={{ padding: 16 }}>
+      <Button type="primary" onClick={() => setIsModalOpen(true)}>
+        Thêm Ván
+      </Button>
+
+      <div
+        className="mt-10"
+        style={{ display: "flex", flexWrap: "wrap", gap: 8 }}
+      >
+        {matches.map((item: any) => (
+          <Button
+            key={item}
+            type="default"
+            onClick={() => goTo(item)}
+            className="border border-gray-300 rounded-lg px-4 py-1 bg-white shadow-sm hover:border-blue-500 transition-all"
+          >
+            {item}
+          </Button>
+        ))}
+      </div>
+
+      <Modal
+        title="Thêm ván mới"
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        onOk={handleAddMatch}
+      >
+        <p>Đặt tên theo cú pháp ngày-tháng-năm. VD: 23-6-2025</p>
+        <Input
+          placeholder="Tên ván mới"
+          value={nameMatch}
+          onChange={(e) => setNameMatch(e.target.value)}
+        />
+      </Modal>
+    </div>
+  );
+}

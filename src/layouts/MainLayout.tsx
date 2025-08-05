@@ -1,19 +1,29 @@
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import Menu from '@/components/Menu';
 import { Outlet } from 'react-router-dom';
 
 export default function MainLayout() {
   return (
-    <div>
-      <header style={{ padding: '10px' }}>
-        <h1>📝 My App</h1>
-      </header>
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <Header />
 
-      <main style={{ padding: '20px' }}>
-        <Outlet />
-      </main>
+      {/* Body: Menu + Content */}
+      <div className="flex flex-1">
+        {/* Sidebar menu */}
+        <div className="hidden md:block w-[240px]">
+          <Menu />
+        </div>
 
-      <footer style={{ padding: '10px', marginTop: '40px' }}>
-        <p>&copy; 2025 Thiên Khánh</p>
-      </footer>
+        {/* Nội dung chính */}
+        <div className="flex-1 p-4">
+          <Outlet />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

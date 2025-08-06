@@ -3,6 +3,7 @@ import {
   collection,
   addDoc,
   getDocs,
+  updateDoc,
   deleteDoc,
   doc,
   query,
@@ -13,12 +14,14 @@ export interface TodoItem {
   id?: string;
   text: string;
   uid: string; // user ID
+  priority: string,
+  deadline: string
 }
 
 // Thêm todo
-export const addTodo = async (text: string, uid: string) => {
+export const addTodo = async (todo: TodoItem) => {
   const todoRef = collection(db, 'todos');
-  return await addDoc(todoRef, { text, uid });
+  return await addDoc(todoRef, todo); // ✅ lưu đủ: text, uid, priority, deadline
 };
 
 // Lấy danh sách todo theo user
@@ -30,6 +33,13 @@ export const getTodos = async (uid: string): Promise<TodoItem[]> => {
     id: doc.id,
     ...doc.data()
   })) as TodoItem[];
+};
+
+export const updateTodo = async (todo: TodoItem) => {
+  if (!todo.id) return;
+  const todoRef = doc(db, 'todos', todo.id);
+  const { id, ...data } = todo;
+  await updateDoc(todoRef, data);
 };
 
 // Xóa todo

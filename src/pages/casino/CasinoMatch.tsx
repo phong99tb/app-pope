@@ -61,6 +61,8 @@ export default function CasinoMatch() {
     newListNamePlay: Player[],
     newListDataMatch: PlayerScore[][]
   ) => {
+    console.log('firebase');
+    
     await setDoc(matchRef, {
       listNamePlay: newListNamePlay,
       listDataMatch: newListDataMatch,
@@ -121,7 +123,11 @@ export default function CasinoMatch() {
     }
     const newList = [dataOneMatch, ...listDataMatch];
     setListDataMatch(newList);
+    console.log('newList', newList);
+    console.log('listNamePlay', listNamePlay);
     saveToFirebase(listNamePlay, newList);
+    console.log(2);
+    
     setDialogAddMatchVisible(false);
   };
 

@@ -18,7 +18,7 @@ export default function Menu() {
   };
 
   return (
-    <Sider width={240} style={{ minHeight: '100vh', background: '#001529' }}>
+    <Sider width={240} style={{ minHeight: '100%', background: '#001529' }}>
       <AntMenu
         theme="dark"
         mode="inline"

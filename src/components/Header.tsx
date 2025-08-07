@@ -2,6 +2,8 @@ import { Avatar, Dropdown, Menu, Space } from "antd";
 import { UserOutlined, DownOutlined, MenuOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import MobileMenuDrawer from "./MobileMenuDrawer"; // 👈 thêm dòng này
+import { signOut } from "firebase/auth";
+import { auth } from '@/firebase';
 
 export default function Header() {
   const username = "Thiên Khánh";
@@ -20,7 +22,7 @@ export default function Header() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleMenuClick = ({ key }: { key: string }) => {
+  const handleMenuClick = async ({ key }: { key: string }) => {
     switch (key) {
       case "profile":
         console.log("Xem hồ sơ");
@@ -32,6 +34,7 @@ export default function Header() {
         console.log("Xem lịch sử thanh toán");
         break;
       case "logout":
+        await signOut(auth);
         console.log("Đăng xuất");
         break;
     }

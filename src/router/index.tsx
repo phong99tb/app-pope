@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from '@/pages/Home';
-import About from '@/pages/About';
 import Register from '@/pages/Register';
 import Login from '@/pages/Login';
 import TodoList from '@/pages/todolist/Todolist';
@@ -9,6 +8,8 @@ import NotFound from '@/pages/NotFound';
 import Money from '@/pages/money/Money';
 import Casino from '@/pages/casino/Casino';
 import CasinoMatch from '@/pages/casino/CasinoMatch';
+
+import { withAuth } from '@/utils/withAuth';
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -21,16 +22,17 @@ const router = createBrowserRouter([
   },
   {
     path: baseURL,
-    element: <MainLayout />, // 👈 Layout bọc các page bên trong
+    element: <MainLayout />,
     children: [
       { path: '', element: <Home /> },
-      { path: 'about', element: <About /> },
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
-      { path: 'todolist', element: <TodoList /> },
-      { path: 'money', element: <Money /> },
-      { path: 'casino', element: <Casino /> },
-      { path: 'casino/:id', element: <CasinoMatch /> },
+
+      { path: 'todolist', element: withAuth(<TodoList />) },
+      { path: 'money', element: withAuth(<Money />) },
+      { path: 'casino', element: withAuth(<Casino />) },
+      { path: 'casino/:id', element: withAuth(<CasinoMatch />) },
+
       { path: '*', element: <NotFound /> },
     ],
   },

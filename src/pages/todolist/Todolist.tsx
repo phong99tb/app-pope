@@ -45,7 +45,8 @@ function TodoList() {
       text,
       uid: user.uid,
       priority,
-      deadline
+      deadline,
+      isDone: false
     };
     await addTodo(todo);
     setText('');

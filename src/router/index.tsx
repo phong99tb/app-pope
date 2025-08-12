@@ -22,18 +22,21 @@ const router = createBrowserRouter([
   },
   {
     path: baseURL,
+    children: [
+      { path: 'login', element: <Login /> },
+      { path: 'register', element: <Register /> },
+      { path: '*', element: <NotFound /> },
+    ],
+  },
+  {
+    path: baseURL,
     element: <MainLayout />,
     children: [
       { path: '', element: <Home /> },
-      { path: 'login', element: <Login /> },
-      { path: 'register', element: <Register /> },
-
       { path: 'todolist', element: withAuth(<TodoList />) },
       { path: 'money', element: withAuth(<Money />) },
       { path: 'casino', element: withAuth(<Casino />) },
       { path: 'casino/:id', element: withAuth(<CasinoMatch />) },
-
-      { path: '*', element: <NotFound /> },
     ],
   },
 ]);

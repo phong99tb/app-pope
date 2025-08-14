@@ -23,6 +23,7 @@ const router = createBrowserRouter([
   {
     path: baseURL,
     children: [
+      { path: '', element: <Home /> },
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
       { path: '*', element: <NotFound /> },
@@ -32,7 +33,6 @@ const router = createBrowserRouter([
     path: baseURL,
     element: <MainLayout />,
     children: [
-      { path: '', element: <Home /> },
       { path: 'todolist', element: withAuth(<TodoList />) },
       { path: 'money', element: withAuth(<Money />) },
       { path: 'casino', element: withAuth(<Casino />) },

@@ -18,15 +18,17 @@ export interface TodoItem {
   deadline: string
 }
 
+var nameDB = 'todos'
+
 // Thêm todo
 export const addTodo = async (todo: TodoItem) => {
-  const todoRef = collection(db, 'todos');
-  return await addDoc(todoRef, todo); // ✅ lưu đủ: text, uid, priority, deadline
+  const todoRef = collection(db, nameDB);
+  return await addDoc(todoRef, todo);
 };
 
 // Lấy danh sách todo theo user
 export const getTodos = async (uid: string): Promise<TodoItem[]> => {
-  const todoRef = collection(db, 'todos');
+  const todoRef = collection(db, nameDB);
   const q = query(todoRef, where('uid', '==', uid));
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => ({
@@ -37,12 +39,12 @@ export const getTodos = async (uid: string): Promise<TodoItem[]> => {
 
 export const updateTodo = async (todo: TodoItem) => {
   if (!todo.id) return;
-  const todoRef = doc(db, 'todos', todo.id);
+  const todoRef = doc(db, nameDB, todo.id);
   const { id, ...data } = todo;
   await updateDoc(todoRef, data);
 };
 
 // Xóa todo
 export const deleteTodo = async (id: string) => {
-  await deleteDoc(doc(db, 'todos', id));
+  await deleteDoc(doc(db, nameDB, id));
 };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Modal, Input, List, message } from "antd";
+import { Button, Modal, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { db } from "@/firebase";
 import {
@@ -13,6 +13,7 @@ import {
 const matchRef = collection(db, "matches");
 
 export default function Casino() {
+  const [messageApi, contextHolder] = message.useMessage();
   const [matches, setMatches] = useState<any>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nameMatch, setNameMatch] = useState("");
@@ -24,6 +25,7 @@ export default function Casino() {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const result = snapshot.docs.map((doc) => doc.data().name);
       setMatches(result);
+      console.log("result", result);
     });
 
     return () => unsubscribe();
@@ -32,7 +34,7 @@ export default function Casino() {
   const handleAddMatch = async () => {
     const name = nameMatch.trim();
     if (!name) {
-      message.warning("Vui lòng nhập tên ván.");
+      messageApi.warning("Vui lòng nhập tên ván.");
       return;
     }
 
@@ -40,10 +42,10 @@ export default function Casino() {
       await addDoc(matchRef, { name });
       setNameMatch("");
       setIsModalOpen(false);
-      message.success("Thêm ván thành công!");
+      messageApi.success("Thêm ván thành công!");
     } catch (error) {
       console.error(error);
-      message.error("Thêm thất bại.");
+      messageApi.error("Thêm thất bại.");
     }
   };
 
@@ -53,6 +55,7 @@ export default function Casino() {
 
   return (
     <div style={{ padding: 16 }}>
+      {contextHolder}
       <Button type="primary" onClick={() => setIsModalOpen(true)}>
         Thêm Ván
       </Button>

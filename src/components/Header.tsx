@@ -62,7 +62,10 @@ export default function Header() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
+          boxShadow: '0px 10px 10px -10px rgba(33, 35, 38, 0.1)',
+          backgroundColor: '#ffffff',
+          color: '#000',
+          borderBottom: '1px solid #0000001a'
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>

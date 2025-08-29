@@ -10,17 +10,24 @@ import {
   where
 } from 'firebase/firestore';
 
-export const addMoney = async (money: any) => {
-  const moneyRef = collection(db, 'moneys');
-  return await addDoc(moneyRef, money);
+export const addListBank = async (data: any) => {
+  const moneyRef = collection(db, 'listBank');
+  return await addDoc(moneyRef, data);
 };
 
-export const getMoneys = async (uid: string): Promise<any[]> => {
-  const moneyRef = collection(db, 'moneys');
+export const getListBank = async (uid: string): Promise<any[]> => {
+  const moneyRef = collection(db, 'listBank');
   const q = query(moneyRef, where('uid', '==', uid));
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data()
   })) as any[];
+};
+
+export const updateListBank = async (listBank: any) => {
+  if (!listBank.id) return;
+  const listBankRef = doc(db, 'listBank', listBank.id);
+  const { id, ...data } = listBank;
+  await updateDoc(listBankRef, data);
 };

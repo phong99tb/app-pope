@@ -1,19 +1,19 @@
-import { db } from "@/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { addListBank, getListBank } from "@/services/moneyService";
-import { Button, Form, Input, message, Modal, Select } from "antd";
-import { collection } from "firebase/firestore";
+import { Button, Form, Input, message, Modal } from "antd";
 import { useEffect, useState } from "react";
 
 const Money = () => {
   const [input, setInput] = useState<any>("");
   const [isModalAddAccount, setIsModalAddAccount] = useState<boolean>(false);
+  const [isModalShowAccount, setIsModalShowAccount] = useState<boolean>(false);
   const { user, loading, isAuthenticated } = useAuth();
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const [listBank, setListBank] = useState<any>([])
 
   const handleOk = () => {
-    form.validateFields().then(async(values) => {
+    form.validateFields().then(async (values) => {
       if (!user) return;
       var dataApi = {
         ...values,
@@ -22,6 +22,7 @@ const Money = () => {
       try {
         await addListBank(dataApi);
         messageApi.success("Thêm tài khoản thành công!");
+        setIsModalAddAccount(false)
       } catch (error) {
         messageApi.error("Thêm tài khoản thất bại!");
       }
@@ -31,6 +32,7 @@ const Money = () => {
   const callApiGetListBank = async () => {
     if (!user) return;
     const list = await getListBank(user.uid);
+    setListBank(list)
     console.log('list', list);
   }
 
@@ -49,8 +51,10 @@ const Money = () => {
     <div>
       {contextHolder}
       <h2>Money Page</h2>
-      <Input value={input} onChange={(e) => setInput(e.target.value)} />
-      <Button onClick={()=>{setIsModalAddAccount(true)}}>Thêm tài khoản</Button>
+      <div className="flex gap-3">
+        <Button onClick={() => { setIsModalAddAccount(true) }}>Thêm tài khoản</Button>
+        <Button onClick={() => { setIsModalShowAccount(true) }}>Xem tài khoản</Button>
+      </div>
       <Modal
         title="Thêm tài khoản"
         open={isModalAddAccount}
@@ -84,6 +88,31 @@ const Money = () => {
           </Form.Item>
 
         </Form>
+      </Modal>
+      <Modal
+        title="Quản lý tài khoản"
+        open={isModalShowAccount}
+        onCancel={() => setIsModalShowAccount(false)}
+        // onOk={handleOk}
+        // okText="Lưu"
+        cancelText="Hủy"
+      >
+        <div>
+          {
+            listBank?.map((item: any) => {
+              return (
+                <div className="flex gap-1 flex-col border p-2 rounded" key={item?.id}>
+                  <div className="flex gap-2">
+                    <p>Tên ngân hàng: </p> <span>{item?.nameBank}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <p>Số tiền: </p> <span>{Number(item?.amount).toLocaleString("vi-VN")}</span>
+                  </div>
+                </div>
+              )
+            })
+          }
+        </div>
       </Modal>
     </div>
   );
